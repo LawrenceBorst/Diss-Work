@@ -4,6 +4,7 @@ Script deriving the Frank Condon Profile(s) (FCP) to the case with a zero-temper
 
 import numpy as np
 import strawberryfields as sf
+import matplotlib.pyplot as plt
 
 ############
 # GET DATA #
@@ -26,7 +27,7 @@ def get_Fourier_k(k, K, M, U):
         m (int): total number of modes
         U (array): The Doktorov operation accounting for the linear optical circuit
     """
-    # TODO check for semantic errors
+    # TODO check for semantic errors. Check matrix dimensions! Check if not casting to real.
 
     gamma_hat = np.exp(2 * r) - 1
     N = np.prod(np.sqrt(1 + gamma_hat) / (np.pi * gamma_hat))   # N
@@ -55,10 +56,22 @@ def get_Fourier_k(k, K, M, U):
     return G_tilde_k
 
 # Quick test with receiving the Fourier components
-K = 10
+K = 10      # resolution
+max = 10    # maximum
 components = np.empty(K, dtype="complex")
-for k in range(K):
-    components[k] = get_Fourier_k(k, K, len(Ud), U1)
+
+# x
+x = np.arange(0, max, max/K)
+y = np.empty((K))
+print(np.shape(x))
+print(np.shape(y))
+
+for i in np.arange(0, K):
+    k = i * max / K
+    y[i] = get_Fourier_k(k, K, len(Ud), U2)
 
 # Quick test, seeing if the FCPs are actually real numbers  # TODO check if the prefactor 1/(K+1) is accounted for
+print(components)
 print(np.fft.ifft(components))
+#plt.plot(x, np.real(np.fft.ifft(components)))
+#plt.show()
