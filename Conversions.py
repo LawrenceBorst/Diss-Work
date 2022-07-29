@@ -14,6 +14,12 @@ import numpy as np
 
 H = 2
 
+
+def get_symp_form(n: int) -> np.ndarray:
+    return np.block([[np.zeros((n, n)), np.identity(n)],
+                     [-np.identity(n), np.zeros((n, n))]])
+
+
 def xp_to_ca(n: int) -> np.ndarray:
     """Returns a conversion matrix from x-p space (r = (x_{0}, p_{0},..., x_{n}, p_{n}))
     to c-a space (r = (a_{0}, c_{0},..., a_{n}, c_{n}))
@@ -101,3 +107,5 @@ def symp_form_n_to_2(n : int) -> np.ndarray:
         P[n+i][2*i+1] = 1
 
     return P
+
+
