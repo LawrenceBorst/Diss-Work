@@ -16,12 +16,12 @@ t, U1, r, U2, alpha = sf.apps.vibronic.gbs_params(w, wp, Ud, delta, T)  # Circui
 
 go = GaussianOperator.GaussianOperator()
 
+S = Conversions.get_symp_form(7)
+
 gs = GaussianState.GaussianState(n=7, basis="2BlockXP")
 np.set_printoptions(precision=1)
-ut1, st1, vt1 = sf.decompositions.bloch_messiah(gs.sigma)
 gs = go.interferometer(gs, U1)  # this function ignores the basis
-ut1, st1, vt1 = sf.decompositions.bloch_messiah(gs.sigma)
-gs = go.squeeze(gs, 2 * r)      # 2 * r as SF uses a different convention for the exponent
+gs = go.squeeze(gs, r)      # 2 * r as SF uses a different convention for the exponent TODO KEEP IN MIND
 ut1, st1, vt1 = sf.decompositions.bloch_messiah(gs.sigma)
 gs = go.interferometer(gs, U2)
 ut1, st1, vt1 = sf.decompositions.bloch_messiah(gs.sigma)
