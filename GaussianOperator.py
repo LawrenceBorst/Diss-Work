@@ -1,6 +1,8 @@
 """
 """
 import numpy as np
+
+import Conversions
 import GaussianState as gs
 import Conversions as conv
 
@@ -83,18 +85,22 @@ class GaussianOperator:
             S = np.block([[S, np.zeros((np.shape(S)[0], 2))],
                         [np.zeros((2, np.shape(S)[1])), s]])
 
-        np.set_printoptions(precision=2)    # TODO REMOVE THIS
-
         # transform S dependent on the basis
         n = gs_in.n
         if gs_in.basis == "nBlockXP":
             pass
         elif gs_in.basis == "2BlockXP":
-            S = conv.symp_form_n_to_2(n) @ S @ conv.symp_form_2_to_n(n)
+            S = conv.symp_form_n_to_2(n) @ S @ conv.symp_form_2_to_n(n)    # TODO double check this and remove the below test
+
+            omega = Conversions.get_symp_form(n)    # symplectic form
+            print("test")
+            print(np.round(S, decimals=2))
+            print(np.round(S @ omega @ np.conjugate(S).T, decimals=2))  # this should equal omega, and it does(!)
+
         elif gs_in.basis == "nBlockCA":
             S = conv.xp_to_ca(n) @ S @ conv.ca_to_xp(n)
         elif gs_in.basis == "2BlockCA":
-            S = conv.symp_form_n_to_2(n)@ conv.xp_to_ca(n) @ S @ conv.ca_to_xp(n) @ conv.symp_form_2_to_n(n)
+            S = conv.symp_form_n_to_2(n) @ conv.xp_to_ca(n) @ S @ conv.ca_to_xp(n) @ conv.symp_form_2_to_n(n)
 
         n_out = gs_in.n
         mu_out = S @ gs_in.mu
@@ -128,6 +134,6 @@ class GaussianOperator:
 
         n_out = gs_in.n
         mu_out = S @ gs_in.mu
-        sigma_out = S @ gs_in.sigma @ S.T
+        sigma_out = S @ gs_in.sigma @ np.conjugate(S).T
 
         return gs.GaussianState(n_out, mu_out, sigma_out, gs_in.basis)
